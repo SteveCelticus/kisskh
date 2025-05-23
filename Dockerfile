@@ -1,10 +1,9 @@
 FROM node:20-slim
 
-# Installa dipendenze per Chromium
+# Installa Chromium e le dipendenze necessarie
 RUN apt-get update && \
     apt-get install -y \
-        wget \
-        ca-certificates \
+        chromium \
         fonts-liberation \
         libasound2 \
         libatk-bridge2.0-0 \
@@ -21,16 +20,18 @@ RUN apt-get update && \
         libxdamage1 \
         libxrandr2 \
         xdg-utils \
+        wget \
+        ca-certificates \
         --no-install-recommends && \
-    rm -rf /var/lib/apt/lists/* \
-    chromium \
-    chromium-driver
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-WORKDIR /usr/src/app
+# Imposta la variabile d'ambiente per Puppeteer (path esatto di chromium su Debian/Ubuntu)
+# ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
+
+WORKDIR /app
 
 COPY package*.json ./
-
-RUN npm install -g npm@11.4.1
 
 RUN npm install
 
